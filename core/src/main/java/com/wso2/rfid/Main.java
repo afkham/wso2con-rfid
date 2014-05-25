@@ -18,11 +18,26 @@
  */
 package com.wso2.rfid;
 
+import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.serial.Serial;
+import com.pi4j.io.serial.SerialDataEvent;
+import com.pi4j.io.serial.SerialDataListener;
+import com.pi4j.io.serial.SerialFactory;
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.util.PythonInterpreter;
+
 /**
  * TODO: class level comment
  */
 public class Main {
     public static void main(String[] args) {
-
+        PythonInterpreter interpreter = new PythonInterpreter();
+        interpreter.execfile("MFRC522.py");
+// execute a function that takes a string and returns a string
+        PyObject readRFID = interpreter.get("readRFID");
+        PyObject result = readRFID.__call__();
+        String rfid = (String) result.__tojava__(String.class);
+        System.out.println(rfid);
     }
 }
