@@ -17,10 +17,10 @@ signal.signal(signal.SIGINT, end_read)
 httpServ = httplib.HTTPConnection("127.0.0.1", 8084)
 httpServ.connect()
 
-POWER_LED = 0
-CARD_READ_LED = 4
+POWER_LED = 11
+CARD_READ_LED = 12
 
-GPIO.setmode(GPIO.BOARD) ## Use board pin numbering
+# GPIO.setmode(GPIO.BCM) ## Use board pin numbering
 GPIO.setup(POWER_LED, GPIO.OUT)
 GPIO.setup(CARD_READ_LED, GPIO.OUT)
 GPIO.output(POWER_LED,True)
