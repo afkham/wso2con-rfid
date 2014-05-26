@@ -128,7 +128,7 @@
                             <outputDirectory>${project.build.directory}/distro-contents/lib</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
-                            <excludeTransitive>true</excludeTransitive>
+                            <excludeTransitive>false</excludeTransitive>
                             <stripVersion>false</stripVersion>
                         </configuration>
                     </execution>
