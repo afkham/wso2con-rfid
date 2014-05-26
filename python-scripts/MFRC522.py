@@ -366,7 +366,6 @@ class MFRC522:
 MIFAREReader = MFRC522()
 
 def readRFID():
-  MIFAREReader = MFRC522()
   (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
 
   if status == MIFAREReader.MI_OK:
@@ -374,5 +373,6 @@ def readRFID():
 
   (status,backData) = MIFAREReader.MFRC522_Anticoll()
   if status == MIFAREReader.MI_OK:
-    return str(backData[0])+","+str(backData[1])+","+str(backData[2])+","+str(backData[3])+","+str(backData[4])
-  return "Invalid"   
+    id =  str(backData[0])+","+str(backData[1])+","+str(backData[2])+","+str(backData[3])+","+str(backData[4])
+    return id
+  return -1
