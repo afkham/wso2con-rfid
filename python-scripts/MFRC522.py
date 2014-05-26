@@ -375,4 +375,4 @@ def readRFID():
   (status,backData) = MIFAREReader.MFRC522_Anticoll()
   if status == MIFAREReader.MI_OK:
     return str(backData[0])+","+str(backData[1])+","+str(backData[2])+","+str(backData[3])+","+str(backData[4])
-  
+  return "Invalid"   
