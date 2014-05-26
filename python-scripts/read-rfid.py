@@ -1,4 +1,5 @@
 import MFRC522 as rfid
+import tone as tone
 import signal
 import RPi.GPIO as GPIO
 import httplib
@@ -30,6 +31,7 @@ while continue_reading:
       rfidValue = rfid.readRFID()
       if rfidValue != -1:
         GPIO.output(CARD_READ_LED,True)
+        tone.playTone()
         print "RFID=" + rfidValue
         httpServ.request('PUT', '/rfid', rfidValue)
         response = httpServ.getresponse()
