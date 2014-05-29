@@ -3,6 +3,7 @@ import tone as tone
 import signal
 import RPi.GPIO as GPIO
 import httplib
+import time as t
 
 continue_reading = True
 # Capture SIGINT
@@ -33,10 +34,10 @@ while continue_reading:
         GPIO.output(CARD_READ_LED,True)
         tone.playTone()
         print "RFID=" + rfidValue
-        httpServ.request('PUT', '/rfid', rfidValue)
-        response = httpServ.getresponse()
-        if response.status == httplib.OK:
-          response.read()
+#        httpServ.request('PUT', '/rfid', rfidValue)
+#        response = httpServ.getresponse()
+#        if response.status == httplib.OK:
+#          response.read()
         GPIO.output(CARD_READ_LED,False)
     except Exception, e:
         GPIO.output(CARD_READ_LED,False)

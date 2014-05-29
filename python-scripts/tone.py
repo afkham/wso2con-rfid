@@ -6,13 +6,14 @@ wiringpi2.wiringPiSetup()
 #wiringpi2.wiringPiSetupSys()
 
 PIN=4
-FREQUENCY1=349
-FREQUENCY2=740
+FREQUENCY1=250
+FREQUENCY2=1024
+
+wiringpi2.softToneCreate(PIN)
 
 def playTone():
-  wiringpi2.softToneCreate(PIN)
   wiringpi2.softToneWrite(PIN,FREQUENCY1)
-  time.sleep(0.10)
+  time.sleep(0.1)
   wiringpi2.softToneWrite(PIN,FREQUENCY1)
-  time.sleep(0.10)
+  time.sleep(0.05)
   wiringpi2.softToneWrite(PIN,0)
