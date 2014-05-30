@@ -26,6 +26,7 @@ import java.util.Map;
  * TODO: class level comment
  */
 public class RFIDRegistrationBuffer {
+    private static final long REGISTRATION_TIMEOUT = 15*60*1000;
 
     private static RFIDRegistrationBuffer instance = new RFIDRegistrationBuffer();
     private Map<String, Long> rfidMap = new HashMap<>();
@@ -40,11 +41,13 @@ public class RFIDRegistrationBuffer {
 
     public void add(String rfid){
         Long timestamp = rfidMap.get(rfid);
+        long now = System.currentTimeMillis();
         if(timestamp == null){
-            long now = System.currentTimeMillis();
             rfidMap.put(rfid, now);
             System.out.println("Registered RFID: " + rfid + " at " + new Date(now));
-        } else {
+        } else if(now - timestamp > REGISTRATION_TIMEOUT){
+            rfidMap.put(rfid, now);
+            System.out.println("Registered RFID: " + rfid + " at " + new Date(now));
 
         }
     }
