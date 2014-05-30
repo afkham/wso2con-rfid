@@ -39,7 +39,10 @@ def sendRFID(rfidValue):
         repeat = False
       except Exception, e:
         print "Error while sending RFID to server: " + str(e)
+        repeat = True
         time.sleep(500)
+        httpServ = httplib.HTTPConnection("127.0.0.1", 8084)
+        httpServ.connect()
 
 while continue_reading:
     try:
