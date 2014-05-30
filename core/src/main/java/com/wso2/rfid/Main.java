@@ -21,19 +21,13 @@ package com.wso2.rfid;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Enumeration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -46,14 +40,16 @@ public class Main {
 
 
     public static void main(String[] args) {
+        String rpiControlCenterIP = System.getProperty("rpiControlCenterIP", "10.100.1.192");
+
         // Read device ID
         String deviceID = readDeviceID();
-        
+
         Server server = new Server(InetSocketAddress.createUnresolved("127.0.0.1", 8084));
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
         handler.addServletWithMapping(RFIDReaderServlet.class, "/rfid");
-        scheduler.scheduleWithFixedDelay(new MonitoringTask(), 0, 10, TimeUnit.SECONDS);
+        scheduler.scheduleWithFixedDelay(new MonitoringTask(rpiControlCenterIP), 0, 10, TimeUnit.SECONDS);
 
         try {
             server.start();
@@ -68,11 +64,18 @@ public class Main {
     }
 
     private static class MonitoringTask implements Runnable {
+        private String rpiControlCenterIP;
+
+        public MonitoringTask(String rpiControlCenterIP) {
+
+            this.rpiControlCenterIP = rpiControlCenterIP;
+        }
+
         @Override
         public void run() {
             try {
                 NetworkAddress networkAddress = new NetworkAddress();
-                String controlCenterUrl = "http://10.100.1.192:9763/rpi/addme.jsp?mymac=" + networkAddress.getMacAddress() +
+                String controlCenterUrl = "http://" + rpiControlCenterIP + ":9763/rpi/addme.jsp?mymac=" + networkAddress.getMacAddress() +
                         "&myip=" + networkAddress.getIpV4Address();
                 HttpClient client = HttpClientBuilder.create().build();
                 HttpGet post = new HttpGet(controlCenterUrl);
@@ -86,5 +89,4 @@ public class Main {
             }
         }
     }
-
 }
