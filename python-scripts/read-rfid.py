@@ -17,7 +17,7 @@ def end_read(signal,frame):
     httpServ.close()
 
 signal.signal(signal.SIGINT, end_read)
-#httpServ = httplib.HTTPConnection("127.0.0.1", 8084)
+httpServ = httplib.HTTPConnection("127.0.0.1", 8084)
 #httpServ.connect()
 
 POWER_LED = 11
@@ -32,7 +32,7 @@ def sendRFID(rfidValue):
     repeat = True
     while repeat:
       try:
-        httpServ = httplib.HTTPConnection("127.0.0.1", 8084)
+        #httpServ = httplib.HTTPConnection("127.0.0.1", 8084)
         httpServ.connect()
         httpServ.request('PUT', '/rfid', rfidValue)
         response = httpServ.getresponse()
