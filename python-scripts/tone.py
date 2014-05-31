@@ -5,7 +5,7 @@ import time
 wiringpi2.wiringPiSetup()
 #wiringpi2.wiringPiSetupSys()
 
-PIN=4
+PIN=7
 FREQUENCY1=250
 FREQUENCY2=1024
 
