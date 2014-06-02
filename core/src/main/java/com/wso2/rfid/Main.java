@@ -75,11 +75,13 @@ public class Main {
         public void run() {
             try {
                 NetworkAddress networkAddress = new NetworkAddress();
-                String controlCenterUrl = "http://" + rpiControlCenterIP + ":9763/rpi/addme.jsp?mymac=" + networkAddress.getMacAddress() +
-                        "&myip=" + networkAddress.getIpV4Address();
-                HttpClient client = HttpClientBuilder.create().build();
-                HttpGet post = new HttpGet(controlCenterUrl);
-                client.execute(post);
+                if (networkAddress.getMacAddress() != null) {
+                    String controlCenterUrl = "http://" + rpiControlCenterIP + ":9763/rpi/addme.jsp?mymac=" + networkAddress.getMacAddress() +
+                            "&myip=" + networkAddress.getIpV4Address();
+                    HttpClient client = HttpClientBuilder.create().build();
+                    HttpGet post = new HttpGet(controlCenterUrl);
+                    client.execute(post);
+                }
             } catch (SocketException e) {
                 e.printStackTrace();
             } catch (ClientProtocolException e) {
