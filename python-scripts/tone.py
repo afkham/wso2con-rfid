@@ -5,7 +5,7 @@ import time
 wiringpi2.wiringPiSetup()
 #wiringpi2.wiringPiSetupSys()
 
-PIN=4
+PIN=7
 FREQUENCY1=250
 FREQUENCY2=1024
 
@@ -17,3 +17,6 @@ def playTone():
   wiringpi2.softToneWrite(PIN,FREQUENCY1)
   time.sleep(0.05)
   wiringpi2.softToneWrite(PIN,0)
+
+#while True:
+#  playTone()

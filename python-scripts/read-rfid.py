@@ -5,12 +5,20 @@ import RPi.GPIO as GPIO
 import httplib
 import thread
 import time
+import logging
+
+log = logging.getLogger('rfid-reader')
+hdlr = logging.FileHandler('/home/pi/wso2con-rfid/rfid-reader.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+log.addHandler(hdlr) 
+log.setLevel(logging.INFO)
 
 continue_reading = True
 # Capture SIGINT
 def end_read(signal,frame):
     global continue_reading
-    print "Ctrl+C captured, ending read."
+    log.info("Ctrl+C captured, ending read.")
     continue_reading = False
     GPIO.output(POWER_LED,False)
     GPIO.cleanup() 
@@ -20,8 +28,8 @@ signal.signal(signal.SIGINT, end_read)
 httpServ = httplib.HTTPConnection("127.0.0.1", 8084)
 #httpServ.connect()
 
-POWER_LED = 11
-CARD_READ_LED = 12
+POWER_LED = 13
+CARD_READ_LED = 11
 
 # GPIO.setmode(GPIO.BCM) ## Use board pin numbering
 GPIO.setup(POWER_LED, GPIO.OUT)
@@ -40,7 +48,7 @@ def sendRFID(rfidValue):
           response.read()
         repeat = False
       except Exception, e:
-        print "Error while sending RFID to server: " + str(e)
+        log.error("Error while sending RFID to server: " + str(e))
         repeat = True
         time.sleep(500)
 
@@ -50,10 +58,10 @@ while continue_reading:
       if rfidValue != -1:
         GPIO.output(CARD_READ_LED,True)
         tone.playTone()
-        print "RFID=" + rfidValue
+        log.info("RFID=" + rfidValue)
         thread.start_new_thread(sendRFID, (str(rfidValue),)) 
         GPIO.output(CARD_READ_LED,False)
     except Exception, e:
         GPIO.output(CARD_READ_LED,False)
-        print("Error :" + str(e))
+        log.info("Error :" + str(e))
 
