@@ -1,1 +1,1 @@
-* * * * * sh /home/pi/wso2con-rfid/scripts/start-processes.sh 2>&1 /tmp/cron1.log
+* * * * * sh /home/pi/wso2con-rfid/scripts/start-processes.sh 2>&1 /home/pi/wso2con-rfid/cron.log
