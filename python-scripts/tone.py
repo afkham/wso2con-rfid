@@ -13,9 +13,9 @@ wiringpi2.softToneCreate(PIN)
 
 def playTone():
   wiringpi2.softToneWrite(PIN,FREQUENCY1)
-  time.sleep(0.1)
+  time.sleep(0.2)
   wiringpi2.softToneWrite(PIN,FREQUENCY1)
-  time.sleep(0.05)
+  time.sleep(0.1)
   wiringpi2.softToneWrite(PIN,0)
 
 #while True:

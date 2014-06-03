@@ -60,6 +60,8 @@ public class Main {
     }
 
     private static String readDeviceID() {
+        //TODO: contact RPi Control Center & get Device ID & Device Label
+        // Get all teh relevant info such as label, location, device ID etc. from control center
         return null;
     }
 
@@ -76,11 +78,13 @@ public class Main {
             try {
                 NetworkAddress networkAddress = new NetworkAddress();
                 if (networkAddress.getMacAddress() != null) {
-                    String controlCenterUrl = "http://" + rpiControlCenterIP + ":9763/rpi/addme.jsp?mymac=" + networkAddress.getMacAddress() +
-                            "&myip=" + networkAddress.getIpV4Address();
+                    String controlCenterUrl = "http://" + rpiControlCenterIP + ":9763/rpi/addme.jsp?mymac=" +
+                            networkAddress.getMacAddress() + "&myip=" + networkAddress.getIpV4Address();
                     HttpClient client = HttpClientBuilder.create().build();
-                    HttpGet post = new HttpGet(controlCenterUrl);
-                    client.execute(post);
+                    HttpGet get = new HttpGet(controlCenterUrl);
+                    client.execute(get);
+
+                    //As the response, get back information about the device (Label, location, blink, reboot etc.)
                 }
             } catch (SocketException e) {
                 e.printStackTrace();
