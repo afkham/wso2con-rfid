@@ -18,12 +18,13 @@
  */
 package com.wso2.rfid;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
+import com.wso2.rfid.apicalls.HttpClient;
+import org.apache.http.HttpResponse;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main {
     private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
+    private static RaspberryPi me;
 
     public static void main(String[] args) {
         String rpiControlCenterIP = System.getProperty("rpiControlCenterIP", "10.100.1.192");
@@ -67,6 +68,7 @@ public class Main {
 
     private static class MonitoringTask implements Runnable {
         private String rpiControlCenterIP;
+        private HttpClient httpClient = new HttpClient();
 
         public MonitoringTask(String rpiControlCenterIP) {
 
@@ -80,19 +82,42 @@ public class Main {
                 if (networkAddress.getMacAddress() != null) {
                     String controlCenterUrl = "http://" + rpiControlCenterIP + ":9763/rpi/addme.jsp?mymac=" +
                             networkAddress.getMacAddress() + "&myip=" + networkAddress.getIpV4Address();
-                    HttpClient client = HttpClientBuilder.create().build();
-                    HttpGet get = new HttpGet(controlCenterUrl);
-                    client.execute(get);
+                    HttpResponse httpResponse = httpClient.doGet(controlCenterUrl, null);
+                    int statusCode = httpResponse.getStatusLine().getStatusCode();
+                    if (statusCode == 200) {
+                        JSONParser parser = new JSONParser();
+                        JSONObject obj = (JSONObject) parser.parse(httpClient.getResponsePayload(httpResponse));
+                        me = getRaspberryPi(obj);
+
+                    } else {
+                        System.err.println("Could not register Raspberry Pi. HTTP Status Code: " + statusCode);
+                    }
 
                     //As the response, get back information about the device (Label, location, blink, reboot etc.)
                 }
             } catch (SocketException e) {
                 e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
+
+        private RaspberryPi getRaspberryPi(JSONObject obj) {
+            RaspberryPi rpi = new RaspberryPi();
+            rpi.setMacAddress((String) obj.get("mac"));
+            rpi.setIpAddress((String) obj.get("ip"));
+            rpi.setZoneID((String) obj.get("zoneID"));
+            rpi.setConsumerKey((String) obj.get("ck"));
+            rpi.setConsumerSecret((String) obj.get("cs"));
+            rpi.setBlink((Boolean) obj.get("blink"));
+            rpi.setReboot((Boolean) obj.get("reboot"));
+            return rpi;
+        }
+    }
+
+    public static RaspberryPi getMe() {
+        return me;
     }
 }

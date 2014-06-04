@@ -18,6 +18,8 @@
  */
 package com.wso2.rfid;
 
+import com.wso2.rfid.apicalls.APICall;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,8 @@ import java.io.InputStreamReader;
  * TODO: class level comment
  */
 public class RFIDReaderServlet extends HttpServlet {
+
+
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         StringBuilder stringBuilder = new StringBuilder();
@@ -55,6 +59,9 @@ public class RFIDReaderServlet extends HttpServlet {
         }
         String rfid = stringBuilder.toString();
         System.out.println("RFID=" + rfid);
+        RaspberryPi me = Main.getMe();
+        APICall.userCheckin(me.getMacAddress(), rfid, me.getConsumerKey(), me.getConsumerSecret());
+
         response.setStatus(HttpServletResponse.SC_OK);
     }
 }
