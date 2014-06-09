@@ -26,9 +26,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,17 +43,15 @@ public class Main {
     private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private static RaspberryPi me;
 
-    public static void main(String[] args) {
-        String rpiControlCenterIP = System.getProperty("rpiControlCenterIP", "10.100.1.192");
-
-        // Read device ID
-        String deviceID = readDeviceID();
+    public static void main(String[] args) throws IOException {
+        Properties configs = new Properties();
+        configs.load(new FileInputStream(System.getenv("RPI_AGENT_HOME") + File.separator + "config.properties"));
 
         Server server = new Server(InetSocketAddress.createUnresolved("127.0.0.1", 8084));
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
         handler.addServletWithMapping(RFIDReaderServlet.class, "/rfid");
-        scheduler.scheduleWithFixedDelay(new MonitoringTask(rpiControlCenterIP), 0, 10, TimeUnit.SECONDS);
+        scheduler.scheduleWithFixedDelay(new MonitoringTask(configs.getProperty("control.center.url")), 0, 10, TimeUnit.SECONDS);
 
         try {
             server.start();
@@ -60,18 +61,11 @@ public class Main {
         }
     }
 
-    private static String readDeviceID() {
-        //TODO: contact RPi Control Center & get Device ID & Device Label
-        // Get all teh relevant info such as label, location, device ID etc. from control center
-        return null;
-    }
-
     private static class MonitoringTask implements Runnable {
         private String rpiControlCenterIP;
         private HttpClient httpClient = new HttpClient();
 
         public MonitoringTask(String rpiControlCenterIP) {
-
             this.rpiControlCenterIP = rpiControlCenterIP;
         }
 
@@ -88,12 +82,18 @@ public class Main {
                         JSONParser parser = new JSONParser();
                         JSONObject obj = (JSONObject) parser.parse(httpClient.getResponsePayload(httpResponse));
                         me = getRaspberryPi(obj);
+                        if (me.isReboot()) {
+                            reboot();
+                        }
+                        if (me.isBlink()) {
 
+                        }
+                        if (me.isSoftwareUpdateRequired()) {
+                            updateSoftware();
+                        }
                     } else {
                         System.err.println("Could not register Raspberry Pi. HTTP Status Code: " + statusCode);
                     }
-
-                    //As the response, get back information about the device (Label, location, blink, reboot etc.)
                 }
             } catch (SocketException e) {
                 e.printStackTrace();
@@ -102,6 +102,14 @@ public class Main {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+        }
+
+        private void updateSoftware() {
+
+        }
+
+        private void reboot() {
+
         }
 
         private RaspberryPi getRaspberryPi(JSONObject obj) {
@@ -113,6 +121,8 @@ public class Main {
             rpi.setConsumerSecret((String) obj.get("cs"));
             rpi.setBlink((Boolean) obj.get("blink"));
             rpi.setReboot((Boolean) obj.get("reboot"));
+            rpi.setUserCheckinURL((String) obj.get("userCheckinURL"));
+            rpi.setSoftwareUpdateRequired((Boolean) obj.get("isSoftwareUpdateRequired"));
             return rpi;
         }
     }

@@ -36,8 +36,10 @@ public class APICall {
 
     private static String tokenEndpoint = "http://gateway.apicloud.cloudpreview.wso2.com:8280/token";
 
-    public static void userCheckin(String deviceID, String rfid, String consumerKey, String consumerSecret){
-        String url = "https://gateway.apicloud.cloudpreview.wso2.com:8243/t/indikas.com/wso2coniot/1.0.0/conferences/2/userCheckIn";
+    public static void userCheckin(String deviceID, String rfid,
+                                   String url,
+                                   String consumerKey, String consumerSecret){
+//        String url = "https://gateway.apicloud.cloudpreview.wso2.com:8243/t/indikas.com/wso2coniot/1.0.0/conferences/2/userCheckIn";
         Token token = getToken(consumerKey, consumerSecret);
         if (token != null) {
             HttpClient httpClient = new HttpClient();
