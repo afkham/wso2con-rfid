@@ -34,7 +34,6 @@ public class NetworkAddress {
         Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
-            System.out.println("networkInterface = " + networkInterface.getDisplayName());
 //            if (networkInterface.getDisplayName().startsWith("en0")) { //TODO: change
             if (networkInterface.getDisplayName().startsWith("eth0")) { //TODO: change
 //            if (networkInterface.getDisplayName().startsWith("wlan")) {
@@ -51,7 +50,6 @@ public class NetworkAddress {
                     sb.append(String.format("%02X%s", macAddrs[i], (i < macAddrs.length - 1) ? "-" : ""));
                 }
                 this.macAddress = sb.toString();
-                System.out.println("macAddress = " + macAddress);
             }
         }
     }
