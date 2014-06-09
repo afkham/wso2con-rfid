@@ -51,7 +51,9 @@ public class Main {
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
         handler.addServletWithMapping(RFIDReaderServlet.class, "/rfid");
-        scheduler.scheduleWithFixedDelay(new MonitoringTask(configs.getProperty("control.center.url")), 0, 10, TimeUnit.SECONDS);
+        String controlCenterURL = configs.getProperty("control.center.url");
+        System.out.println("Using RPi Control Center: " + controlCenterURL);
+        scheduler.scheduleWithFixedDelay(new MonitoringTask(controlCenterURL), 0, 10, TimeUnit.SECONDS);
 
         try {
             server.start();
@@ -65,8 +67,8 @@ public class Main {
         private String controlCenterURL;
         private HttpClient httpClient = new HttpClient();
 
-        public MonitoringTask(String rpiControlCenterIP) {
-            this.controlCenterURL = rpiControlCenterIP;
+        private MonitoringTask(String controlCenterURL) {
+            this.controlCenterURL = controlCenterURL;
         }
 
         @Override
@@ -122,7 +124,7 @@ public class Main {
             rpi.setBlink((Boolean) obj.get("blink"));
             rpi.setReboot((Boolean) obj.get("reboot"));
             rpi.setUserCheckinURL((String) obj.get("userCheckinURL"));
-            rpi.setSoftwareUpdateRequired((Boolean) obj.get("swUpdateReqd"));
+//            rpi.setSoftwareUpdateRequired((Boolean) obj.get("swUpdateReqd"));
             return rpi;
         }
     }

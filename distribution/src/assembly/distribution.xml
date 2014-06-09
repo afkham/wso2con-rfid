@@ -3,12 +3,6 @@
     <formats>
         <format>zip</format>
     </formats>
-    <files>
-        <file>
-            <source>../config.properties</source>
-            <outputDirectory>/</outputDirectory>
-        </file>
-    </files>
     <fileSets>
         <fileSet>
             <directory>target/distro-contents</directory>
@@ -19,6 +13,7 @@
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>**/*.sh</include>
+                <include>**/*.properties</include>
             </includes>
             <fileMode>755</fileMode>
         </fileSet>
