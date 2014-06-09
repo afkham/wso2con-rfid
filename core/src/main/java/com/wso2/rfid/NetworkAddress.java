@@ -30,13 +30,11 @@ public class NetworkAddress {
     private String macAddress;
     private String ipV4Address;
 
-    public NetworkAddress() throws SocketException {
+    public NetworkAddress(String primaryNetworkInterface) throws SocketException {
         Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
-//            if (networkInterface.getDisplayName().startsWith("en0")) { //TODO: change
-            if (networkInterface.getDisplayName().startsWith("eth0")) { //TODO: change
-//            if (networkInterface.getDisplayName().startsWith("wlan")) {
+            if (networkInterface.getDisplayName().startsWith(primaryNetworkInterface)) {
                 byte[] macAddrs = networkInterface.getHardwareAddress();
                 Enumeration ee = networkInterface.getInetAddresses();
                 while (ee.hasMoreElements()) {

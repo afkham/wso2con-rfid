@@ -57,7 +57,8 @@ public class Main {
         String tokenEndpoint = configs.getProperty("token.endpoint");
         System.out.println("Using token endpoint: " + tokenEndpoint);
         APICall.setTokenEndpoint(tokenEndpoint);
-        scheduler.scheduleWithFixedDelay(new MonitoringTask(controlCenterURL), 0, 10, TimeUnit.SECONDS);
+        String primaryNwInterface = configs.getProperty("primary.nw.interface");
+        scheduler.scheduleWithFixedDelay(new MonitoringTask(controlCenterURL, primaryNwInterface), 0, 10, TimeUnit.SECONDS);
 
         try {
             server.start();
@@ -69,16 +70,18 @@ public class Main {
 
     private static class MonitoringTask implements Runnable {
         private String controlCenterURL;
+        private String primaryNetworkInterface;
         private HttpClient httpClient = new HttpClient();
 
-        private MonitoringTask(String controlCenterURL) {
+        private MonitoringTask(String controlCenterURL, String primaryNetworkInterface) {
             this.controlCenterURL = controlCenterURL;
+            this.primaryNetworkInterface = primaryNetworkInterface;
         }
 
         @Override
         public void run() {
             try {
-                NetworkAddress networkAddress = new NetworkAddress();
+                NetworkAddress networkAddress = new NetworkAddress(primaryNetworkInterface);
                 if (networkAddress.getMacAddress() != null) {
                     String controlCenterUrl = controlCenterURL + "/addme.jsp?mymac=" +
                             networkAddress.getMacAddress() + "&myip=" + networkAddress.getIpV4Address();
