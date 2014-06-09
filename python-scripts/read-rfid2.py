@@ -2,11 +2,11 @@ import MFRC522 as rfid
 import tone as tone
 import signal
 import RPi.GPIO as GPIO
-import httplib
 from threading import Thread
 from Queue import Queue
 import time
 import logging
+import requests
 
 log = logging.getLogger('rfid-reader')
 hdlr = logging.FileHandler('/home/pi/wso2con-rfid/rfid-reader.log')
@@ -24,10 +24,8 @@ def end_read(signal,frame):
     continue_reading = False
     GPIO.output(POWER_LED,False)
     GPIO.cleanup()
-    httpServ.close()
 
 signal.signal(signal.SIGINT, end_read)
-httpServ = httplib.HTTPConnection("127.0.0.1", 8084)
 
 POWER_LED = 13
 CARD_READ_LED = 11
@@ -37,7 +35,7 @@ GPIO.setup(POWER_LED, GPIO.OUT)
 GPIO.setup(CARD_READ_LED, GPIO.OUT)
 GPIO.output(POWER_LED,True)
 
-rfidQueue = Queue(250)
+rfidQueue = Queue(50)
 
 class ProducerThread(Thread):
     def run(self):
@@ -51,7 +49,6 @@ class ProducerThread(Thread):
                     tone.playTone()
                     #log.info("RFID=" + rfidValue)
                     rfidQueue.put(rfidValue)
-#                    rfidQueue.task_done()
                     GPIO.output(CARD_READ_LED,False)
                     time.sleep(0.5)
                 else:
@@ -70,18 +67,13 @@ class ConsumerThread(Thread):
             try:
                 if not rfidQueue.empty():
                     print "Items to be processed" 
-                    httpServ.connect()
-                    print "Connected to HTTP server"
                     rfidValue = rfidQueue.get()
                     print "Processing RFID " + rfidValue
-                    #rfidQueue.task_done()
+                    rfidQueue.task_done()
                     print "Sending request..."
-                    httpServ.request('PUT', '/rfid', rfidValue)
+                    r = requests.put("http://127.0.0.1:8084/rfid",data=rfidValue)
                     print "Request sent"
-                    response = httpServ.getresponse()
-                    print "status="+response.status
-                    if response.status == httplib.OK:
-                        response.read()
+                    print "status=" + str(r.status_code)
                     #repeat = False
                 time.sleep(0.5)
             except Exception, e:
