@@ -122,7 +122,7 @@ public class Main {
             rpi.setBlink((Boolean) obj.get("blink"));
             rpi.setReboot((Boolean) obj.get("reboot"));
             rpi.setUserCheckinURL((String) obj.get("userCheckinURL"));
-            rpi.setSoftwareUpdateRequired((Boolean) obj.get("isSoftwareUpdateRequired"));
+            rpi.setSoftwareUpdateRequired((Boolean) obj.get("swUpdateReqd"));
             return rpi;
         }
     }
