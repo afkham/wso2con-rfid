@@ -58,10 +58,11 @@ public class RFIDReaderServlet extends HttpServlet {
             }
         }
         String rfid = stringBuilder.toString();
-        System.out.println("RFID=" + rfid);
-        RaspberryPi me = Main.getMe();
-        APICall.userCheckin(me.getMacAddress(), rfid, me.getUserCheckinURL(), me.getConsumerKey(), me.getConsumerSecret());
-
+        if(RFIDRegistrationBuffer.getInstance().add(rfid)) {
+            System.out.println("RFID=" + rfid);
+            RaspberryPi me = Main.getMe();
+            APICall.userCheckin(me.getMacAddress(), rfid, me.getUserCheckinURL(), me.getConsumerKey(), me.getConsumerSecret());
+        }
         response.setStatus(HttpServletResponse.SC_OK);
     }
 }
