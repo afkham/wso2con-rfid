@@ -45,7 +45,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         Properties configs = new Properties();
-        configs.load(new FileInputStream(System.getenv("RPI_AGENT_HOME") + File.separator + "config.properties"));
+        configs.load(new FileInputStream(System.getProperty("rpi.agent.home") + File.separator + "config.properties"));
 
         Server server = new Server(InetSocketAddress.createUnresolved("127.0.0.1", 8084));
         ServletHandler handler = new ServletHandler();

@@ -259,6 +259,7 @@ do
     -XX:HeapDumpPath="$RPI_AGENT_HOME/repository/logs/heap-dump.hprof" \
     $JAVA_OPTS \
     -Djava.library.path=$LIB_PATH \
+    -Drpi.agent.home="$RPI_AGENT_HOME" \
     -classpath "$RPI_AGENT_CLASSPATH" \
     -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
     -Djava.io.tmpdir="$RPI_AGENT_HOME/tmp" \
