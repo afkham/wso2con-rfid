@@ -34,7 +34,7 @@ import java.io.IOException;
 public class APICall {
     private static final Log log = LogFactory.getLog(APICall.class);
 
-    private static String tokenEndpoint = "https://gateway.api.cloud.wso2.com:8243/token";
+    private static String tokenEndpoint = "http://gateway.api.cloud.wso2.com:8280/token";
 
     public static void setTokenEndpoint(String tokenEndpoint){
         APICall.tokenEndpoint = tokenEndpoint;
