@@ -18,6 +18,7 @@
  */
 package com.wso2.rfid;
 
+import com.wso2.rfid.apicalls.APICall;
 import com.wso2.rfid.apicalls.HttpClient;
 import org.apache.http.HttpResponse;
 import org.eclipse.jetty.server.Server;
@@ -53,6 +54,9 @@ public class Main {
         handler.addServletWithMapping(RFIDReaderServlet.class, "/rfid");
         String controlCenterURL = configs.getProperty("control.center.url");
         System.out.println("Using RPi Control Center: " + controlCenterURL);
+        String tokenEndpoint = configs.getProperty("token.endpoint");
+        System.out.println("Using token endpoint: " + tokenEndpoint);
+        APICall.setTokenEndpoint(tokenEndpoint);
         scheduler.scheduleWithFixedDelay(new MonitoringTask(controlCenterURL), 0, 10, TimeUnit.SECONDS);
 
         try {
