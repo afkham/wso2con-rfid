@@ -35,7 +35,8 @@ public class NetworkAddress {
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
             System.out.println("networkInterface = " + networkInterface.getDisplayName());
-            if (networkInterface.getDisplayName().startsWith("wlan")) {
+            if (networkInterface.getDisplayName().startsWith("eth0")) { //TODO: change
+//            if (networkInterface.getDisplayName().startsWith("wlan")) {
                 byte[] macAddrs = networkInterface.getHardwareAddress();
                 Enumeration ee = networkInterface.getInetAddresses();
                 while (ee.hasMoreElements()) {
