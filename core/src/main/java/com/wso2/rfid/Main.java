@@ -62,11 +62,11 @@ public class Main {
     }
 
     private static class MonitoringTask implements Runnable {
-        private String rpiControlCenterIP;
+        private String controlCenterURL;
         private HttpClient httpClient = new HttpClient();
 
         public MonitoringTask(String rpiControlCenterIP) {
-            this.rpiControlCenterIP = rpiControlCenterIP;
+            this.controlCenterURL = rpiControlCenterIP;
         }
 
         @Override
@@ -74,7 +74,7 @@ public class Main {
             try {
                 NetworkAddress networkAddress = new NetworkAddress();
                 if (networkAddress.getMacAddress() != null) {
-                    String controlCenterUrl = "http://" + rpiControlCenterIP + ":9763/rpi/addme.jsp?mymac=" +
+                    String controlCenterUrl = controlCenterURL + "/addme.jsp?mymac=" +
                             networkAddress.getMacAddress() + "&myip=" + networkAddress.getIpV4Address();
                     HttpResponse httpResponse = httpClient.doGet(controlCenterUrl, null);
                     int statusCode = httpResponse.getStatusLine().getStatusCode();
