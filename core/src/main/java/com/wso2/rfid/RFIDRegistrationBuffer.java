@@ -41,7 +41,7 @@ public class RFIDRegistrationBuffer {
 
     public boolean containsValid(String rfid) {
         long now = System.currentTimeMillis();
-        return rfidMap.containsKey(rfid) && now - rfidMap.get(rfid) > REGISTRATION_TIMEOUT;
+        return rfidMap.containsKey(rfid) && now - rfidMap.get(rfid) < REGISTRATION_TIMEOUT;
     }
 
     public void add(String rfid) {
