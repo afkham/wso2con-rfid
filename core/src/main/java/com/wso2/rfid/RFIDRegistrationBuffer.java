@@ -26,31 +26,27 @@ import java.util.Map;
  * TODO: class level comment
  */
 public class RFIDRegistrationBuffer {
-    private static final long REGISTRATION_TIMEOUT = 30*60*1000;
+    private static final long REGISTRATION_TIMEOUT = 30 * 60 * 1000;
 
     private static RFIDRegistrationBuffer instance = new RFIDRegistrationBuffer();
     private Map<String, Long> rfidMap = new HashMap<>();
 
-    private RFIDRegistrationBuffer(){
+    private RFIDRegistrationBuffer() {
 
     }
 
-    public static RFIDRegistrationBuffer getInstance(){
+    public static RFIDRegistrationBuffer getInstance() {
         return instance;
     }
 
-    public boolean add(String rfid){
-        Long timestamp = rfidMap.get(rfid);
+    public boolean containsValid(String rfid) {
         long now = System.currentTimeMillis();
-        if(timestamp == null){
-            rfidMap.put(rfid, now);
-            System.out.println("Registered RFID: " + rfid + " at " + new Date(now));
-            return true;
-        } else if(now - timestamp > REGISTRATION_TIMEOUT){
-            rfidMap.put(rfid, now);
-            System.out.println("Registered RFID: " + rfid + " at " + new Date(now));
-            return true;
-        }
-        return false;
+        return rfidMap.containsKey(rfid) && now - rfidMap.get(rfid) > REGISTRATION_TIMEOUT;
+    }
+
+    public void add(String rfid) {
+        long now = System.currentTimeMillis();
+        rfidMap.put(rfid, now);
+        System.out.println("Registered RFID: " + rfid + " at " + new Date(now));
     }
 }

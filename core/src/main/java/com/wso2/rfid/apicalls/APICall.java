@@ -60,7 +60,7 @@ public class APICall {
 
     public static void userCheckin(String deviceID, String rfid,
                                    String url,
-                                   String consumerKey, String consumerSecret) {
+                                   String consumerKey, String consumerSecret) throws UserCheckinException {
 //        String url = "https://gateway.apicloud.cloudpreview.wso2.com:8243/t/indikas.com/wso2coniot/1.0.0/conferences/2/userCheckIn";
         Token token = getToken(consumerKey, consumerSecret);
         if (token != null) {
@@ -73,7 +73,7 @@ public class APICall {
                         httpClient.doPost(url, "Bearer " + token.getAccessToken(), json.toJSONString(), "application/json");
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 if (statusCode != 200) {
-                    log.error("User checkin failed. HTTP Status Code:" + statusCode + ", RFID: " + rfid);
+                    throw new UserCheckinException("User checkin failed. HTTP Status Code:" + statusCode + ", RFID: " + rfid);
                 }
             } catch (IOException e) {
                 log.error("", e);

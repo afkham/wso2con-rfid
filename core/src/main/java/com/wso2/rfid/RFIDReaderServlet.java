@@ -19,6 +19,7 @@
 package com.wso2.rfid;
 
 import com.wso2.rfid.apicalls.APICall;
+import com.wso2.rfid.apicalls.UserCheckinException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -57,15 +58,20 @@ public class RFIDReaderServlet extends HttpServlet {
                 bufferedReader.close();
             }
         }
+
         String rfid = stringBuilder.toString();
-        if(RFIDRegistrationBuffer.getInstance().add(rfid)) {
-            System.out.println("RFID=" + rfid);
-            RaspberryPi me = Main.getMe();
-            if (me != null) {
-                if (me.getMode().equals("USER_REGISTRATION")) {
-                    APICall.userRegistration(me.getMacAddress(), rfid);
-                } else {
+        System.out.println("RFID=" + rfid);
+        RaspberryPi me = Main.getMe();
+        if ("USER_REGISTRATION".equals(me.getMode())) {
+            APICall.userRegistration(me.getMacAddress(), rfid);
+        } else {
+            RFIDRegistrationBuffer registrationBuffer = RFIDRegistrationBuffer.getInstance();
+            if (!registrationBuffer.containsValid(rfid)) {
+                try {
                     APICall.userCheckin(me.getMacAddress(), rfid, me.getUserCheckinURL(), me.getConsumerKey(), me.getConsumerSecret());
+                    registrationBuffer.add(rfid);
+                } catch (UserCheckinException e) {
+                    e.printStackTrace();
                 }
             }
         }
