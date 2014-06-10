@@ -35,6 +35,7 @@ public class RaspberryPi {
     private String id;
     private String userCheckinURL;
     private boolean softwareUpdateRequired;
+    private String mode;
 
     public RaspberryPi() {
     }
@@ -163,6 +164,14 @@ public class RaspberryPi {
 
     public void setSoftwareUpdateRequired(boolean softwareUpdateRequired) {
         this.softwareUpdateRequired = softwareUpdateRequired;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 }
 

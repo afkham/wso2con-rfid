@@ -35,14 +35,32 @@ public class APICall {
     private static final Log log = LogFactory.getLog(APICall.class);
 
     private static String tokenEndpoint = "http://gateway.api.cloud.wso2.com:8280/token";
+    private static String userRegistrationEndpoint = "http://10.100.1.39:9764/rfid/register.jag";
 
-    public static void setTokenEndpoint(String tokenEndpoint){
+    public static void setTokenEndpoint(String tokenEndpoint) {
         APICall.tokenEndpoint = tokenEndpoint;
+    }
+
+    public static void setUserRegistrationEndpoint(String userRegistrationEndpoint) {
+        APICall.userRegistrationEndpoint = userRegistrationEndpoint;
+    }
+
+    public static void userRegistration(String deviceID, String rfid) {
+        try {
+            HttpResponse httpResponse = new HttpClient().doGet(userRegistrationEndpoint +
+                    "?device=" + deviceID + "&rfid=" + rfid, null);
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            if (statusCode != 200) {
+                log.error("User registration failed. HTTP Status Code:" + statusCode + ", RFID: " + rfid);
+            }
+        } catch (IOException e) {
+            log.error("", e);
+        }
     }
 
     public static void userCheckin(String deviceID, String rfid,
                                    String url,
-                                   String consumerKey, String consumerSecret){
+                                   String consumerKey, String consumerSecret) {
 //        String url = "https://gateway.apicloud.cloudpreview.wso2.com:8243/t/indikas.com/wso2coniot/1.0.0/conferences/2/userCheckIn";
         Token token = getToken(consumerKey, consumerSecret);
         if (token != null) {
@@ -54,7 +72,7 @@ public class APICall {
                 HttpResponse httpResponse =
                         httpClient.doPost(url, "Bearer " + token.getAccessToken(), json.toJSONString(), "application/json");
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
-                if(statusCode != 200){
+                if (statusCode != 200) {
                     log.error("User checkin failed. HTTP Status Code:" + statusCode + ", RFID: " + rfid);
                 }
             } catch (IOException e) {

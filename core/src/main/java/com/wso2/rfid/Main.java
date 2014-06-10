@@ -58,6 +58,9 @@ public class Main {
         System.out.println("Using token endpoint: " + tokenEndpoint);
         APICall.setTokenEndpoint(tokenEndpoint);
         String primaryNwInterface = configs.getProperty("primary.nw.interface");
+        String userRegEndpoint = configs.getProperty("user.registration.endpoint");
+        System.out.println("Using user registration endpoint: " + userRegEndpoint);
+        APICall.setUserRegistrationEndpoint(userRegEndpoint);
         scheduler.scheduleWithFixedDelay(new MonitoringTask(controlCenterURL, primaryNwInterface), 0, 10, TimeUnit.SECONDS);
 
         try {
@@ -131,6 +134,7 @@ public class Main {
             rpi.setBlink((Boolean) obj.get("blink"));
             rpi.setReboot((Boolean) obj.get("reboot"));
             rpi.setUserCheckinURL((String) obj.get("userCheckinURL"));
+            rpi.setMode((String) obj.get("mode"));
 //            rpi.setSoftwareUpdateRequired((Boolean) obj.get("swUpdateReqd"));
             return rpi;
         }

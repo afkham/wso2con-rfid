@@ -62,7 +62,11 @@ public class RFIDReaderServlet extends HttpServlet {
             System.out.println("RFID=" + rfid);
             RaspberryPi me = Main.getMe();
             if (me != null) {
-                APICall.userCheckin(me.getMacAddress(), rfid, me.getUserCheckinURL(), me.getConsumerKey(), me.getConsumerSecret());
+                if (me.getMode().equals("USER_REGISTRATION")) {
+                    APICall.userRegistration(me.getMacAddress(), rfid);
+                } else {
+                    APICall.userCheckin(me.getMacAddress(), rfid, me.getUserCheckinURL(), me.getConsumerKey(), me.getConsumerSecret());
+                }
             }
         }
         response.setStatus(HttpServletResponse.SC_OK);
