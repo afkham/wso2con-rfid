@@ -73,7 +73,8 @@ public class APICall {
                         httpClient.doPost(url, "Bearer " + token.getAccessToken(), json.toJSONString(), "application/json");
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 if (statusCode != 200) {
-                    throw new UserCheckinException("User checkin failed. HTTP Status Code:" + statusCode + ", RFID: " + rfid);
+                    throw new UserCheckinException("User checkin failed. HTTP Status Code:" + statusCode +
+                            ", RFID: " + rfid + ", CK=" + consumerKey + ", CS=" + consumerSecret + ", URL=" + url);
                 }
             } catch (IOException e) {
                 log.error("", e);
@@ -119,16 +120,16 @@ public class APICall {
      */
     public static Token getAccessToken(String accessTokenJson) {
         JSONParser parser = new JSONParser();
-        Token token = new Token();
+        Token token = null;
         try {
             Object obj = parser.parse(accessTokenJson);
             JSONObject jsonObject = (JSONObject) obj;
+            token = new Token();
             token.setAccessToken((String) jsonObject.get("access_token"));
             long expiresIn = ((Long) jsonObject.get("expires_in")).intValue();
             token.setExpiresIn(expiresIn);
             token.setRefreshToken((String) jsonObject.get("refresh_token"));
             token.setTokenType((String) jsonObject.get("token_type"));
-
         } catch (ParseException e) {
             log.error("", e);
         }
