@@ -99,6 +99,14 @@ public class APICall {
                 return null;
             }
             String response = httpClient.getResponsePayload(httpResponse);
+            if(response == null || response.isEmpty()){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return getToken(consumerKey, consumerSecret);  //Risk of infinite recursion :)
+            }
             return getAccessToken(response);
         } catch (IOException e) {
             log.error("", e);
